@@ -12,6 +12,7 @@ import messagesModel from "./dao/models/messages.model.js"
 const app = express();
 // const messages = [];
 
+
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
@@ -47,7 +48,6 @@ socketServer.on("connection", async (socket) => {
     `Cliente conectado, id ${socket.id} desde ${socket.handshake.address}`
   );
   socket.on("newMessage", async (data) => {
-    // messages.push(data);
 
     const newMessage = await messagesModel.insertMany( data);
     console.log(

@@ -4,7 +4,7 @@
     {{#each data}}
 
       <div class="card" id="card" style="width: 18rem; margin: 25px;">
-        <img src=/static/img/{{thumbnail}}
+        <img src=/static/img/{{_id.thumbnail}}
           class="card-img-top"
           alt="imagen{{id}}"
         />
@@ -40,12 +40,11 @@
   
   
   socketClient.on("newProduct", data =>
-  { productsList.innerHTML += `<div class="card" style="width: 18rem; "> <img
+  { productsList.innerHTML += 
+  `<div class="card" style="width: 18rem; margin: 25px"> <img
   src=static/img/${data.thumbnail} class="card-img-top" alt=imagen${data.id}>
-  <div class="card-body"> <h5 class="card-title" style="text-align: center;">${data.title}</h5>
-  <p class="card-text" style="text-align: center;">${data.description}</p> <div
-  class="bottoms" style="display: flex; justify-content: center;"> <a
-  id="deleteBottom" class="btn btn-danger">Delete</a> </div> </div> </div>` })
+  <div class="card-body" style="display: flex; justify-content: center; flex-direction:column"> <h5 class="card-title" style="text-align: center;">${data.title}</h5>
+  <p class="card-text" style="text-align: center;">${data.description}</p> </div> </div>` })
 
   
 </script>

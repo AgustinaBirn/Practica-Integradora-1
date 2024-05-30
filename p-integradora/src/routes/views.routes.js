@@ -1,17 +1,43 @@
 import { Router } from "express";
 import messagesModel from "../dao/models/messages.model.js";
 import productsModel from "../dao/models/products.model.js";
+import { ProductManager } from "../dao/manager.mdb.js";
+import { CartManager } from "../dao/cart.manager.mdb.js";
+import cartsModel from "../dao/models/carts.model.js"
+
 
 import fs from "fs";
 
 const router = Router();
+const productManager = new ProductManager("../dao/models/products.model.js");
+const cartManager = new CartManager("../dao/cart.manager.mdb.js");
 
-// const route = "./products.json";
-// const data = await fs.promises.readFile(route, "utf-8");
-// const dataJson = JSON.parse(data);
+router.get("/products", async (req, res) => {
+  const limit = +req.query.limit || 10;
+  const page = +req.query.page || 1;
+  const query = req.query.query;
+  const sort = +req.query.sort || 1;
 
-// const dbMessages = await messagesModel.find().lean();
-// const productsDb = await productsModel.find().lean();
+  let products;
+  if(query){
+    products = await productsModel.paginate({category: query}, {page: page, limit: limit, sort: {price : sort}});
+  } else {
+    products = await productsModel.paginate({}, {page: page, limit: limit, sort: {price : sort}});
+  }
+
+  products = products.docs
+
+  // const products = await productManager.getProducts(limit, page, query, sort);
+  console.log("PRODUCTS :", products.docs);
+  res.render("home", {products});
+});
+
+router.get("/carts/:cid", async (req, res) => {
+  const cid = req.params.cid;
+  const cart = await cartManager.getCartById(cid);
+  
+  res.render("cartId", {data : cart});
+});
 
 router.get("/welcome", async (req, res) => {
   const user = { name: "Agustina" };
@@ -20,12 +46,18 @@ router.get("/welcome", async (req, res) => {
 });
 
 router.get("/realtimeproducts", async (req, res) => {
-  const productsDb = await productsModel.find().lean();
-  res.render("realTimeProducts", { data: productsDb });
+  const limit = +req.query.limit || 10;
+  const page = +req.query.page || 1;
+  const query = req.query.query;
+  const sort = +req.query.sort || 1;
+
+  const products = await productManager.getProducts(limit, page, query, sort);
+  console.log(products);
+  res.render("realTimeProducts", { data: products });
 });
 
 router.get("/", async (req, res) => {
-  const productsDb = await productsModel.find().lean();
+  const productsDb = await productManager.getProducts();
   res.render("home", { data: productsDb });
 });
 

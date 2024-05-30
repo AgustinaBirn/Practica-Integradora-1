@@ -1,17 +1,17 @@
 <div>
-  <h1>Lista de productos fija</h1>
+  <h1>Carrito</h1>
   <div id="productsList"  style="display: flex; justify-content: center; flex-wrap: wrap;">
-    {{#each products}}
+    {{#each data.products}}
 
       <div class="card" id="card" style="width: 18rem; margin: 25px;">
-        <img src=/static/img/{{this.thumbnail}}
+        <img src=/static/img/{{this._id.thumbnail}}
           class="card-img-top"
-          alt="imagen{{this.title}}"
+          alt="imagen{{this._id.id}}"
         />
         <div class="card-body"  style="display: flex; justify-content: center; flex-direction:column">
-          <h5 class="card-title" style="text-align: center;">{{this.title}}</h5>
-          <p class="card-text" style="text-align: center;">{{this.description}}</p>
-          <p class="card-price" style="text-align: center;">${{this.price}}</p>
+          <h5 class="card-title" style="text-align: center;">{{this._id.title}}</h5>
+          <p class="card-text" style="text-align: center;">{{this._id.description}}</p>
+          <p class="card-price" style="text-align: center;">${{this._id.price}}</p>
         </div>
         <div class="buttons"style="display: flex; justify-content: center; margin-block-end: 25px">
           <button type="button" class="btn btn-primary">Añadir al carrito</button>
@@ -19,10 +19,7 @@
       </div>
     {{/each}}
   </div>
-  <div class="buttons-page">
-  <button type="button"  class="btn btn-primary previousPage"><</button>
-  <button type="button" class="btn btn-primary nextPage">></button>
-  </div>
+
 </div>
 
 <script
@@ -32,10 +29,6 @@
 ></script>
 
 <script>
-  {{!-- const previousPage = document.getElementById("previousPage");
-  const nextPage = document.getElementById("nextPage");
-
-  previousPage.onclick= data.nextPage && console.log(data.nextPage) --}}
 
   const serverAddress = "ws://localhost:8080"; 
   const socketClient = io(serverAddress);

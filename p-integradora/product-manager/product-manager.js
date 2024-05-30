@@ -10,7 +10,6 @@ export class ProductManager {
 
   async addProduct(product) {
     await this.getProducts(0);
-    // Validar que todos los campos sean obligatorios
     if (
       !product.title ||
       !product.description ||
@@ -23,23 +22,18 @@ export class ProductManager {
       console.log("Todos los campos son obligatorios.");
     }
 
-    // const thumbnail = product.thumbnail;
-
-    // Validar que el código no se repita
     if (this.products.some((prod) => prod.code === product.code)) {
       console.log("El código de producto ya existe.");
     } else {
-      // Asignar un id autoincrementable al producto
       product.id = this.productIdCounter+=1;
 
       product.thumbnail ;
       console.log(product);
-      // Agregar el producto al array
+
       this.products.push(product);
       const data = JSON.stringify(this.products);
       try {
         await fs.promises.writeFile(route, data);
-        // return (content = await fs.promises.readFile(route));
       } catch (err) {
         console.log("no se pudo agregar el producto", err);
       }
@@ -51,7 +45,6 @@ export class ProductManager {
       const data = await fs.promises.readFile(route, "utf-8");
       const dataJson = JSON.parse(data);
       this.products = dataJson;
-      // return this.products;
       return limit === 0 ? this.products : this.products.slice(0, limit);
     } catch (err) {
       console.log("No se pudo leer el archivo", err);

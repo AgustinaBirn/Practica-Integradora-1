@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { CartManager } from "../../cart-manager/cart-manager.js";
+import { CartManager } from "../dao/cart.manager.mdb.js"; 
 
 const router = Router();
 
-const manager = new CartManager("../../product-manager/product-manager.js");
+const manager = new CartManager("../dao/cart.manager.mdb.js");
 
 router.get("/", async (req, res) => {
   const limit = +req.query.limit || 0;
@@ -12,14 +12,14 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:cid", async (req, res) => {
-  const cid = +req.params.cid;
+  const cid = req.params.cid;
   const cartId = await manager.getCartById(cid);
   res.status(200).send({ status: "1", payload: cartId });
 });
 
 router.post("/", async (req, res) => {
-  req.body = { products: [] };
-  const newCart = await manager.addCart();
+  req.body = { products: {}};
+  const newCart = await manager.addCart(req.body);
 
   try {
     res.status(200).send({
@@ -36,26 +36,79 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.post("/:cid/product/:pid", async (req, res) => {
-  const body = req.body;
-  const cid = +req.params.cid;
-  const pid = +req.params.pid;
+router.post("/:cid/products/:pid", async (req, res) => {
 
-  const newProduct = await manager.addProductsToCart(cid, pid);
-  const { product = "", quantity = 1 } = req.body;
-
+  const cid = req.params.cid;
+  const pid = req.params.pid;
+  
   try {
+    const newProduct = await manager.addProductsToCart(cid, pid);
     res.status(200).send({
       status: "1",
       payload: `Se agrego el producto número: ${pid}`,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).send({
       status: "ERROR",
       payload: {},
-      error: "Error al agregar el producto r",
+      error: "Error al agregar el producto"
     });
   }
+});
+
+router.put("/:cid/products/:pid/:quantity", async (req, res) => {
+
+  const cid = req.params.cid;
+  const pid = req.params.pid;
+  const quantity = +req.params.quantity;
+  
+  try {
+    const newProduct = await manager.updateProducts(cid, pid, quantity);
+    res.status(200).send({
+      status: "1",
+      payload: `Se modificó el producto número: ${pid}`,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({
+      status: "ERROR",
+      payload: {},
+      error: "Error al modificar el producto"
+    });
+  }
+});
+
+router.delete("/:cid/products/:pid", async (req, res) => {
+  try {const cid = req.params.cid;
+  const pid = req.params.pid;
+
+  const cartId = await manager.removeProductToCart(cid, pid);
+  res.status(200).send({ status: "1", payload: cartId })
+} catch(err){
+  console.log(err);
+    res.status(400).send({
+      status: "ERROR",
+      payload: {},
+      error: "Error al eliminar el producto"
+    });
+}
+});
+
+router.delete("/:cid", async (req, res) => {
+  try {const cid = req.params.cid;
+  const pid = req.params.pid;
+
+  const cartId = await manager.removeAllProductsFromCart(cid, pid);
+  res.status(200).send({ status: "1", payload: cartId })
+} catch(err){
+  console.log(err);
+    res.status(400).send({
+      status: "ERROR",
+      payload: {},
+      error: "Error al eliminar el producto"
+    });
+}
 });
 
 export default router;
