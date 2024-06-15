@@ -81,8 +81,8 @@ router.get("/login", (req, res) => {
 });
 
 router.get("/profile", (req, res) => {
-  console.log("pasa por profile");
-  if(!req.session.user) return res.redirect("/login");
+  console.log("pasa por profile", req.session.user);
+  if(!req.session.user) return res.redirect("/pplogin");
   res.render("profile", {user: req.session.user});
 });
 

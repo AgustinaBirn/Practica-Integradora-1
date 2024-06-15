@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import FileStore from "session-file-store";
 import MongoStore from "connect-mongo";
+import passport from "passport";
 
 import config from "./config.js";
 import productsRoutes from "./routes/products.routes.js";
@@ -59,6 +60,9 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.engine("handlebars", handlebars.engine());
 
