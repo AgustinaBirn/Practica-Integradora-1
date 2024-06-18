@@ -36,15 +36,9 @@ const initAuthStrategies = () => {
         },
         async (req, accessToken, refreshToken, profile, done) => {
             try {
-                // Si passport llega hasta acá, es porque la autenticación en Github
-                // ha sido correcta, tendremos un profile disponible
                 const email = profile._json?.email || null;
                 
-                // Necesitamos que en el profile haya un email
                 if (email) {
-                    // Tratamos de ubicar en NUESTRA base de datos un usuario
-                    // con ese email, si no está lo creamos y lo devolvemos,
-                    // si ya existe retornamos directamente esos datos
                     const foundUser = await manager.findUserByEmail(email);
 
                     if (!foundUser) {

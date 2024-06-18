@@ -83,7 +83,7 @@ router.get("/ghlogin", passport.authenticate("ghlogin", {scope: ["user"]}), asyn
 
 router.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect: `/login?error=${encodeURI('Error al identificar con Github')}`}), async (req, res) => {
     try {
-        req.session.user = req.user // req.user es inyectado AUTOMATICAMENTE por Passport al parsear el done()
+        req.session.user = req.user
         req.session.save(err => {
             if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
         
