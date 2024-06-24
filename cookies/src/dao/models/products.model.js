@@ -3,6 +3,10 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 mongoose.pluralize(null);
 
+// const mongoose = require(mongoose);
+
+// const mongoosePaginate = require(mongoose-paginate-v2);
+
 const collection = "products";
 
 const schema = new mongoose.Schema({

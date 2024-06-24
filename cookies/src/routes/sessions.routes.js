@@ -46,7 +46,7 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
             req.session.save(err => {
                 if(err) return res.status(500).send({status: 500, payload: null, error: err.message});
 
-                res.redirect("/profile");
+                res.redirect("/products");
             })
         } else{
             return res.status(401).send({status: 1, payload: `Email o contraseña no válidos`});
@@ -69,7 +69,7 @@ router.post("/pplogin", verifyRequiredBody(["email", "password"]), passport.auth
                 return res.status(500).send({status: 500, payload: null, error: err.message})
             }
 
-            res.redirect("/profile");
+            res.redirect("/products");
             
         });
     } catch (err) {
@@ -87,7 +87,7 @@ router.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect
         req.session.save(err => {
             if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
         
-            res.redirect('/profile');
+            res.redirect('/products');
         });
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });

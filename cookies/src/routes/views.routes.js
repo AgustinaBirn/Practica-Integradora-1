@@ -20,21 +20,25 @@ router.get("/products", async (req, res) => {
 
   let products;
   if(query){
-    products = await productsModel.paginate({category: query}, {page: page, limit: limit, sort: {price : sort}});
+    products = await productsModel.paginate({category: query}, {page: page, limit: limit, sort: {price : sort}, lean: true});
   } else {
-    products = await productsModel.paginate({}, {page: page, limit: limit, sort: {price : sort}});
+    products = await productsModel.paginate({}, {page: page, limit: limit, sort: {price : sort}, lean: true});
   }
 
   products = products.docs
 
-  if(req.session.user){
-    const firstName = req.session.user.firstName;
-    const lastName  = req.session.user.lastName;
-  }
+  const user = req.session.user? { firstName : req.session.user.firstName,
+     lastName  : req.session.user.lastName, role: req.session.user.role} : "no existe usuario";
+  
+  // if(req.session.user){
+  //   const firstName = req.session.user.firstName;
+  //   const lastName  = req.session.user.lastName;
+  // }
 
   // const products = await productManager.getProducts(limit, page, query, sort);
   console.log("PRODUCTS :", products.docs);
-  res.render("home", {products});
+  console.log(user);
+  res.render("home", {products, user: user});
 });
 
 router.get("/carts/:cid", async (req, res) => {
@@ -61,10 +65,10 @@ router.get("/realtimeproducts", async (req, res) => {
   res.render("realTimeProducts", { data: products });
 });
 
-router.get("/", async (req, res) => {
-  const productsDb = await productManager.getProducts();
-  res.render("home", { data: productsDb });
-});
+// router.get("/", async (req, res) => {
+//   const productsDb = await productManager.getProducts();
+//   res.render("home", { data: productsDb });
+// });
 
 router.get("/chat", async (req, res) => {
   const messagesDb = await messagesModel.find().lean();
