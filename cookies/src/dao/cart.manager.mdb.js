@@ -1,4 +1,6 @@
 import cartsModel from "./models/carts.model.js";
+import usersModel from "./models/user.model.js";
+import productsModel from "./models/products.model.js"
 import { ProductManager } from "./manager.mdb.js";
 
 
@@ -11,16 +13,23 @@ export class CartManager {
 
   async getCarts(limit) {
 
+    // try{
+    //   return await cartsModel.find()
+    //   .populate({path:"_user_id", model: usersModel})
+    //   .populate({path: "products._id", model: productsModel})
+    //   .lean();
+    // }catch(err){
+    //   return err.message;
+    // }
     try {
 
         let data = await cartsModel.find().lean();
-        this.carts = data;
         return limit === 0 ? this.carts : this.carts.slice(0, limit);
         } 
         
         catch (err) {
           console.log("Error al obtener los carritos", err);
-          return [];
+          return {error: err.message};
         }
   }
 

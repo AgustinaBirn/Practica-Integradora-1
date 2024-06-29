@@ -55,20 +55,31 @@ router.get("/welcome", async (req, res) => {
 });
 
 router.get("/realtimeproducts", async (req, res) => {
+
   const limit = +req.query.limit || 10;
+
   const page = +req.query.page || 1;
+
   const query = req.query.query;
+
   const sort = +req.query.sort || 1;
 
   const products = await productManager.getProducts(limit, page, query, sort);
-  console.log(products);
-  res.render("realTimeProducts", { data: products });
-});
 
-// router.get("/", async (req, res) => {
-//   const productsDb = await productManager.getProducts();
-//   res.render("home", { data: productsDb });
+  res.render("realTimeProducts", { ...products,docs:products.docs.map(ed=>{return({title:ed.title,price:ed.price,thumbnail:ed.thumbnail,description:ed.description,id:ed._id+""})}) });;
+
+});
+// router.get("/realtimeproducts", async (req, res) => {
+//   const limit = +req.query.limit || 10;
+//   const page = +req.query.page || 1;
+//   const query = req.query.query;
+//   const sort = +req.query.sort || 1;
+
+//   const products = await productManager.getProducts(limit, page, query, sort);
+//   console.log(products);
+//   res.render("realTimeProducts", { data: products });
 // });
+
 
 router.get("/chat", async (req, res) => {
   const messagesDb = await messagesModel.find().lean();

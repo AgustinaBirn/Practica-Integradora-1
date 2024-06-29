@@ -1,13 +1,24 @@
 import passport from "passport";
 import local from "passport-local";
 import GitHubStrategy from "passport-github2";
+import jwt from "passport-jwt";
 
 import config from "../config.js";
 import {UserManager} from "../dao/user.manager.js";
 import {isValidPassword} from "../utils.js";
 
 const localStrategy = local.Strategy;
+const jwtStrategy = jwt.Strategy;
+const jwtExtractor = jwt.ExtractJwt;
 const manager = new UserManager();
+
+const cookieExtractor = (req) => {
+    let token = null;
+    if(req && req.cookies) token = req.cookies[`cookieToken`];
+
+    return token;
+}
+
 
 const initAuthStrategies = () => {
     passport.use("login", new localStrategy(
@@ -32,14 +43,28 @@ const initAuthStrategies = () => {
         {
             clientID: config.GITHUB_CLIENT_ID,
             clientSecret: config.GITHUB_CLIENT_SECRET,
-            callbackURL: config.GITHUB_CALLBACK_URL
+            callbackURL: config.GITHUB_CALLBACK_URL,
+            // scope: ["user:email"]
         },
         async (req, accessToken, refreshToken, profile, done) => {
             try {
+                const emailsList = profile.emails || null;
                 const email = profile._json?.email || null;
+
+                if (!emailsList && !email) {
+                    const response = await fetch('https://api.github.com/user/emails', {
+                        headers: {
+                            'Authorization': `token ${accessToken}`,
+                            'User-Agent': config.APP_NAME
+                        }
+                    });
+                    const emails = await response.json();
+                    email = emails.filter(email => email.verified).map(email => ({ value: email.email }));
+                }
+                
                 
                 if (email) {
-                    const foundUser = await manager.findUserByEmail(email);
+                    const foundUser = await manager.findUserByEmail(  email);
 
                     if (!foundUser) {
                         const user = {
@@ -64,6 +89,20 @@ const initAuthStrategies = () => {
             }
         }
     ));
+
+    passport.use("jwtlogin", new jwtStrategy(
+        {
+            jwtFromRequest: jwtExtractor.fromExtractors([cookieExtractor]),
+            secretOrKey: config.SECRET
+        },
+        async (jwt_payload, done) => {
+            try{
+                return done(null, jwt_payload);
+            } catch (err) {
+                return done(err);
+            }
+        }
+    ))
 
 //     passport.use("ghlogin", new GitHubStrategy(
 //         {

@@ -1,19 +1,33 @@
 <div>
+
   <h1>Lista de productos realtime</h1>
+
   <div id="productsList"  style="display: flex; justify-content: center;">
-    {{#each data}}
+
+    {{#each docs}}
 
       <div class="card" id="card" style="width: 18rem; margin: 25px;">
-        <img src=/static/img/{{_id.thumbnail}}
+
+        <img src="/static/img/{{this.thumbnail}}"
+
           class="card-img-top"
-          alt="imagen{{id}}"
+
+          alt="imagen{{this.title}}"
+
         />
+
         <div class="card-body"  style="display: flex; justify-content: center; flex-direction:column">
-          <h5 class="card-title" style="text-align: center;">{{title}}</h5>
-          <p class="card-text" style="text-align: center;">{{description}}</p>
+
+          <h5 class="card-title" style="text-align: center;">{{this.title}}</h5>
+
+          <p class="card-text" style="text-align: center;">{{this.description}}</p>
+
         </div>
+
       </div>
+
     {{/each}}
+
   </div>
 
 </div>

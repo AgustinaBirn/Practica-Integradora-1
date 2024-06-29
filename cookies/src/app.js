@@ -14,7 +14,8 @@ import cartRoutes from "./routes/cart.routes.js";
 import viewsRoutes from "./routes/views.routes.js";
 import messagesModel from "./dao/models/messages.model.js"
 import cookieRouter from "./routes/cookies.routes.js"
-import sessionRouter from "./routes/sessions.routes.js"
+import authRouter from "./routes/auth.routes.js"
+import TestRouter from "./routes/test.routes.js";
 
 const app = express();
 const fileStorage = FileStore(session);
@@ -78,7 +79,9 @@ app.use("/api/carts", cartRoutes);
 
 app.use("/api/cookies", cookieRouter);
 
-app.use("/api/session", sessionRouter);
+app.use("/api/auth", authRouter);
+
+app.use("/api/test", new TestRouter().getRouter());
 
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 

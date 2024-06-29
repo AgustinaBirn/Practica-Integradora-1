@@ -8,32 +8,51 @@ export class ProductManager {
   async getProducts(limit, page, query, sort) {
 
     try {
-      if (limit === 0) {
-          return await productsModel.find().lean();
-      } else {
-          return await productsModel.paginate({}, { page: page, limit: limit, lean: true });
+     
+      let filter = {};
+      if (query) {
+        filter.category = query;
       }
+      
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { price: sort }
+      };
+      
+      const products = await productsModel.paginate({}, {filter, options, lean: true});
+      console.log(products);
+      
+      return products
+      
+     
+     
+      // if (limit === 0) {
+      //     return await productsModel.find().lean();
+      // } else {
+      //     return await productsModel.paginate({}, { page: page, limit: limit, lean: true });
+      // }
   } catch (err) {
       return err.message;
   };
     
     // try {
 
-    //   // let filter = {};
-    //   // if (query) {
-    //   //   filter.category = query;
-    //   // }
+      // let filter = {};
+      // if (query) {
+      //   filter.category = query;
+      // }
       
-    //   // const options = {
-    //   //   page: page,
-    //   //   limit: limit,
-    //   //   sort: { price: sort }
-    //   // };
+      // const options = {
+      //   page: page,
+      //   limit: limit,
+      //   sort: { price: sort }
+      // };
       
-    //   // const products = await productsModel.paginate(filter, options);
-    //   // console.log(products);
+      // const products = await productsModel.paginate({}, filter, options, lean: true);
+      // console.log(products);
       
-    //   // return products
+      // return products
       
     // let data = await productsModel.find().lean();
 
